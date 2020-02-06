@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Filter</title>
+    <style>
+        table,td,th{
+            border:1px solid black;
+            border-collapse: collapse;
+            padding: 15px;
+        }
+        table{
+            margin: 0 auto;
+            text-align: center;
+        }
+        fieldset {
+            font-size:15px;
+            padding:10px;
+            width:800px;
+            line-height:1.8;
+        }
+    </style>
+</head>
+<body>
+    <fieldset>
+        <legend>Filter</legend>
+        Nama : <input oninput="filternama()" type="text" id="filternama"><br>
+        Harga : <input oninput="filterharga()" type="text" id="filterharga1"> - <input type="text" id="filterharga2"><br>
+        Kategori : <select onchange="filterkategori()" id="filterkategori">
+                        <option hidden value="">All</option>
+                        <option value="buah">Buah</option>
+                        <option value="elektronik">Elektronik</option>
+                        <option value="cepatsaji">Cepat Saji</option>
+                        <option value="pakaian">Pakaian</option>
+                    </select>
+    </fieldset>
+    <fieldset>
+        <legend>Input Data</legend>
+        <table align="left">
+            <tbody>
+                <tr>
+                    <td><input type="text" id="inputnama" placeholder="Nama"></td>
+                    <td><input type="text" id="inputharga" placeholder="Harga"></td>
+                    <td><select id="inputkategori">
+                            <option hidden value="">All</option>
+                            <option value="buah">Buah</option>
+                            <option value="elektronik">Elektronik</option>
+                            <option value="cepatsaji">Cepat Saji</option>
+                            <option value="pakaian">Pakaian</option>
+                        </select></td>
+                    <td><input type="text" id="inputstok" placeholder="Stok"></td>
+                </tr>
+            </tbody>
+        </table><br><br><br>
+        <button onclick="inputdata()">Submit</button>
+    </fieldset>
+    <fieldset>
+        <legend>Tabel Data</legend>
+        <table align="left" id="myTable">
+            <Thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Kategori</th>
+                    <th>Nama</th>
+                    <th>Harga</th>
+                    <th>Stok</th>
+                </tr>
+            </Thead>
+            <tbody id="listbarang">
+                <tr>
+                    
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>    
+</body>
+<script>
+    class Produk{
+        constructor(id,kategori,nama,harga,stok){
+            this.id=id
+            this.kategori=kategori
+            this.nama=nama
+            this.harga=harga
+            this.stok=stok
+        }
+    }
+
+    var produk=[
+        new Produk(234020355,'buah','apel',5000,5),
+        new Produk(233957878,'cepatsaji','indomie',2000,5),
+        new Produk(23400802,'pakaian','baju',75000,5),
+        new Produk(23408110,'elektronik','headset',15000,5)
+    ]
+
+    const printdata=()=>{
+        var output=''
+        produk.forEach((val)=>{
+            output+=`<tr>
+                        <td>${val.id}</td>
+                        <td>${val.kategori}</td>
+                        <td>${val.nama}</td>
+                        <td>${val.harga}</td>
+                        <td>${val.stok}</td>
+                    </tr>`
+        })
+        document.getElementById('listbarang').innerHTML=output
+        }
+    printdata()
+
+    const inputdata=()=>{
+        var a=new Date().getDay().toString()
+        var b=new Date().getHours().toString()
+        var c=new Date().getMinutes().toString()
+        var d=new Date().getSeconds().toString()
+        var e=new Date().getUTCMilliseconds().toString()
+        var join=parseInt(a+b+c+d+e)
+        var nama= document.getElementById('inputnama').value
+        var harga = parseInt(document.getElementById('inputharga').value)
+        var stok = parseInt(document.getElementById('inputstok').value)
+        var kategori = document.getElementById('inputkategori').value
+        var id = join
+        if(nama=='' || harga=='' || stok=='' || kategori=='' || id==''){
+            alert('Mohon Lengkapi Data')
+        }else{
+            produk.push(new Produk(id,kategori,nama,harga,stok))
+        }
+        printdata()
+    }
+
+    const filternama=()=>{
+        var input, table, tr, td, i, txtValue;
+        input = document.getElementById("filternama").value;
+        // filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[2];
+                if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.indexOf(input) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }       
+        }
+    }
+
+    const filterkategori=()=>{
+        var input, table, tr, td, i, txtValue;
+        input = document.getElementById("filterkategori").value;
+        // filter = input.value.toUpperCase();
+        table = document.getElementById("myTable");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+            td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                txtValue = td.textContent || td.innerText;
+                if (txtValue.indexOf(input) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }       
+        }
+    }            
+    
+</script>
+</html>
