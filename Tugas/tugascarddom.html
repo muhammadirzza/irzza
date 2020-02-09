@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart</title>
+</head>
+<style>
+    table,td,th {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    table{
+        margin: 0 auto;
+        text-align: center;   
+    }    
+</style>
+<body>
+    <center>
+        <h1>Selamat Datang di Toko Kami</h1>
+    </center>
+    <table>
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Produk</th>
+                <th>Harga</th>
+                <th>Gambar</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        </tbody>
+    </table><br><br><br>
+    <center>
+        <p></p><br>
+        <p></p><br><br>
+    </center>
+    <table>
+        
+    </table><br>
+    <center>
+        <p id="countdown"></p>
+        <p></p>
+    </center>
+</body>
+<script>
+    class Produk{
+        constructor(produk,harga,gambar){
+            this.produk=produk
+            this.harga=harga
+            this.gambar=gambar
+        }
+    }
+
+    class Cart{
+        constructor(cartproduk,cartharga,cartgambar){
+            this.cartproduk=cartproduk
+            this.cartharga=cartharga
+            this.cartgambar=cartgambar
+        }
+    }
+
+    var produk=[
+        new Produk('Chitato',10000,'https://assets.klikindomaret.com/products/10001094/10001094_1.jpg'),
+        new Produk('Vans',500000,'https://ecs7.tokopedia.net/img/cache/700/product-1/2019/5/11/3155865/3155865_faf83057-750d-4217-8ac8-edbbaf364089_1080_1080'),
+        new Produk('RedAstray',900000,'https://ecs7.tokopedia.net/img/cache/700/product-1/2018/7/23/2849269/2849269_a574f997-8e07-473e-a2b9-376d7e91b39f_960_960.jpg'),
+        new Produk('Notebook',15000,'https://www.kikki-k.com/on/demandware.static/-/Sites-kikki-master-catalogue/default/dw2631345a/images/11083005/11083005-navy.jpg')
+    ]
+
+    var cart=[]
+
+    const printdata=(array)=>{
+        var output = ''
+        array.forEach((val,index) => {
+            output+=`<tr>
+                        <td name="nomor">${index+1}</td>
+                        <td name="produk">${val.produk}</td>
+                        <td name="harga">${val.harga}</td>
+                        <td name="gambar"><img src=${val.gambar} alt=${index} height='200px'></td>
+                        <td><button onclick="tambahbelanja(${index})" id="tambahbelanja${index}">add to cart</td>
+                    </tr>`           
+        });
+        document.getElementsByTagName('tbody')[0].innerHTML=output
+    }
+    printdata(produk)
+
+    const printcart=()=>{
+        var output=''
+        var totalbeli=0
+        var totalbayar=0
+        cart.forEach((val,index)=>{
+            output+=`<tr id="belanja">
+                        <td>${index+1}</td>
+                        <td>${val.cartproduk}</td>
+                        <td>${val.cartharga}</td>
+                        <td><img src=${val.cartgambar} alt=${index} height='200px'></td>
+                        <td><button onclick="hapuscart(${index})" id="hapuscart">delete from cart</td>
+                    </tr>`
+            totalbeli++
+            totalbayar+=val.cartharga
+        })
+        document.getElementsByTagName('table')[1].innerHTML=output
+        document.getElementById('countdown').innerHTML=`<button onclick="checkout()" id="checkout">checkout</button><br>`
+        if(totalbeli!=0){
+            document.getElementsByTagName('p')[0].innerHTML='Total belanjaan kamu '+totalbeli+' buah'
+            document.getElementsByTagName('p')[1].innerHTML=`Kamu harus bayar sebesar Rp ${totalbayar},00`
+        }else{
+            document.getElementsByTagName('p')[0].innerHTML='keranjang kamu masih ksong'
+            document.getElementsByTagName('p')[1].innerHTML=''
+            document.getElementById('countdown').innerHTML=''
+        }
+    }
+    printcart()
+
+    const tambahbelanja=(index)=>{
+        var konfirmasi=confirm(`Anda yakin ingin beli produk ${produk[index].produk}?`)
+        if(konfirmasi==1){
+            cart.push(new Cart(produk[index].produk,produk[index].harga,produk[index].gambar))            
+        }else{
+
+        }
+        printcart()
+        var tes = document.getElementById('belanja')
+        tes.scrollIntoView()
+    }
+
+    const hapuscart=(indexdel)=>{
+        cart.splice(indexdel,1)
+        printcart()
+    }
+
+    const totalbayar=()=>{
+        var totalbayar=0
+        cart.forEach(function(val,i){
+            totalbayar+=cart[i].cartharga
+        })
+        return totalbayar
+    }
+    var detik = 30
+    var timer
+    const time=()=>{
+        timer=setInterval(timer2,1000)
+    }
+    const timer2=()=>{
+        detik--
+        document.getElementById("countdown").innerHTML = 'Waktu tersisa '+detik + " detik lagi";
+        if(detik < 0){
+            clearInterval(timer);
+            alert('Waktu pembayaran sudah habis')
+            cart=[]
+            document.getElementsByTagName('p')[3].innerHTML=''
+            printcart()
+            document.getElementsByTagName('h1')[0].scrollIntoView()
+            detik = 30
+        }
+    }
+        
+    const checkout=()=>{
+        time()
+        var check=`<input type="text" id="pembayaran" placeholder="masukkan jumlah uang">
+        <button onclick="pay()" id="bayar">pay`
+        document.getElementsByTagName('p')[3].innerHTML=check
+        document.getElementById('bayar').scrollIntoView()
+        
+    }
+    
+    const pay=()=>{
+        var input=document.getElementById('pembayaran').value
+        var inputbayar=parseInt(input)
+        if(input!='' && inputbayar<totalbayar() && detik > 0){
+            alert(`Uang kamu kurang Rp ${totalbayar()-inputbayar},00`)
+        }else if(input!='' && inputbayar>totalbayar() && detik > 0){
+            alert(`Terima kasih uang kembalian Rp ${inputbayar-totalbayar()},00 akan ditransfer ke rekeningmu`)
+            clearInterval(timer)
+            cart=[]
+            document.getElementsByTagName('p')[3].innerHTML=''
+            document.getElementsByTagName('p')[0].innerHTML='keranjang kamu masih ksong'
+            document.getElementsByTagName('p')[1].innerHTML=''
+            document.getElementById('countdown').innerHTML=''
+            printcart()
+            document.getElementsByTagName('h1')[0].scrollIntoView()
+            detik = 30
+        }else if(input!='' && inputbayar==totalbayar() && detik > 0){
+            alert(`Terima kasih sudah belanja disini,\nSilahkan datang kembali`)
+            clearInterval(timer)
+            cart=[]
+            document.getElementsByTagName('p')[3].innerHTML=''
+            document.getElementsByTagName('p')[0].innerHTML='keranjang kamu masih ksong'
+            document.getElementsByTagName('p')[1].innerHTML=''
+            document.getElementById('countdown').innerHTML=''
+            printcart()
+            document.getElementsByTagName('h1')[0].scrollIntoView()
+            detik = 30
+        }else{
+            alert('Silahkan masukkan uang')
+        }
+    }
+</script>
+</html>
