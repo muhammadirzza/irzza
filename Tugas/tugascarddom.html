@@ -130,6 +130,7 @@
     const hapuscart=(indexdel)=>{
         cart.splice(indexdel,1)
         printcart()
+        document.getElementsByTagName('h1')[0].scrollIntoView()
     }
 
     const totalbayar=()=>{
